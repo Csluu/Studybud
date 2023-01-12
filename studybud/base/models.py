@@ -11,17 +11,26 @@ class Topic(models.Model):
         return self.name
 
 class Room(models.Model):
+    # django will automatically give an ID by numbers unless you specify
     host = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
     # have to set null=True with SET_NUll to allow it in the database when it gets deleted and set to NULL 
     topic = models.ForeignKey(Topic, on_delete=models.SET_NULL, null=True) 
     name = models.CharField(max_length=200)
     # null=True, blank=True allows it to be empty in the sql database
     description = models.TextField(null=True, blank=True)
-    # participants
+    # cant use User in this one as we already have a user variable so hence why we use related_name
+    participants = models.ManyToManyField(User, related_name='participants', blank=True)
     # gives a timestamp when it was updated
     updated = models.DateTimeField(auto_now=True)
     # different between auto_now_add=True and auto_now=True is that auto_now_add only does it once when its created 
     created = models.DateTimeField(auto_now_add=True)
+    
+    # 
+    class Meta:
+        # sorts the room it sorts by ascending so old to new. We want to sort it by descending so we have to add - in front of the variable
+        # so ['-updated', '-created'] instead of ['updated', 'created']
+        # it will sort by updated first, then when it was created
+        ordering = ['-updated', '-created']
     
     def __str__(self):
         return self.name
@@ -34,6 +43,9 @@ class Message(models.Model):
     body = models.TextField()
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+    
+    class Meta:
+        ordering = ['-updated', '-created']
     
     def __str__(self):
         # for the admin panel shortening the message so it doesnt clutter the admin panel

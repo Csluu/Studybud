@@ -1,0 +1,4 @@
+/* Need to let settings.py know this file exists - STATICFILES_DIRS = [BASE_DIR / 'static'] */
+body{
+    background-color: aquamarine;
+}

@@ -1,0 +1,15 @@
+{% extends 'main.html'%}
+{% comment %} This is use for updating and creating rooms {% endcomment %}
+
+{% block content %}
+{% comment %} we are using the post method because we are sending data for creating and updating {% endcomment %}
+    <form method="POST" action="">  
+        {% comment %} Need to do this when every form make sure theres no malicious attempts s{% endcomment %}
+        {% csrf_token %}
+        {% comment %} as_p renders the form in paragraphs after each input  {% endcomment %}
+        {{form.as_p}}
+
+        <input type="submit" value="submit" />
+    </form>
+
+{% endblock content%}
