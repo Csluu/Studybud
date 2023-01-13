@@ -9,7 +9,7 @@ urlpatterns = [
         
     path('', views.home, name="home"),
     # pk stands for primary key 
-    # doesnt matter if we change room to room_page or w/e name="room" would handle that for us
+    # doesn't matter if we change room to room_page or w/e name="room" would handle that for us
     path('room/<str:pk>/', views.room, name="room"),
     path('profile/<str:pk>/', views.userProfile, name="user-profile"),
     
@@ -17,5 +17,7 @@ urlpatterns = [
     path('update-room/<str:pk>/', views.updateRoom, name='update-room'),
     path('delete-room/<str:pk>/', views.deleteRoom, name='delete-room'),
     path('delete-message/<str:pk>/', views.deleteMessage, name='delete-message'),
+    
+    path('update-user/', views.updateUser, name='update-user'),
 
 ]

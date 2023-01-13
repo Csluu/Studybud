@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 # One topic can have many rooms and one room can have many messages 
-# The classes have to be ordered top down in order to work properly if not ordered propperly we need to add "" to it - "Topic" instead of Topic in class Room
+# The classes have to be ordered top down in order to work properly if not ordered properly we need to add "" to it - "Topic" instead of Topic in class Room
 class Topic(models.Model):
     name = models.CharField(max_length=200)
     
@@ -48,5 +48,5 @@ class Message(models.Model):
         ordering = ['-updated', '-created']
     
     def __str__(self):
-        # for the admin panel shortening the message so it doesnt clutter the admin panel
+        # for the admin panel shortening the message so it doesn't clutter the admin panel
         return self.body[0:50]
