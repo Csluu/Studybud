@@ -4,9 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm
-from .models import Room, Topic, User, Message
-from .forms import RoomForm, UserForm
+from .models import Room, Topic, User, Message, User
+from .forms import RoomForm, UserForm, MyUserCreationForm
 # create your views here. 
 
 def loginPage(request):
@@ -15,22 +14,22 @@ def loginPage(request):
         return redirect('home')
     
     if request.method == "POST":
-        username = request.POST.get('username').lower()
+        email = request.POST.get('email').lower()
         password = request.POST.get('password')
         
-        # trying to see if its a valid username and password
+        # trying to see if its a valid email and password
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
         except:
             messages.error(request, 'User does not exist')
             
-        user = authenticate(request, username=username, password=password)
+        user = authenticate(request, email=email, password=password)
         
         if user is not None:
             login(request, user)
             return redirect('home')
         else:
-            messages.error(request, 'Username or password does not exist')
+            messages.error(request, 'email or password does not exist')
             
     context = {'page': page}
     return render(request, 'base/login_register.html', context)
@@ -41,11 +40,11 @@ def logoutUser(request):
 
 def registerPage(request):
     # using django's own user creation form 
-    form = UserCreationForm()
+    form = MyUserCreationForm()
 
     # user is submitting the form    
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = MyUserCreationForm(request.POST)
         if form.is_valid():
             # we are saving the form and essentially freezing it, the user gets created but we want to access the form ASAP
             user = form.save(commit=False)
@@ -70,10 +69,11 @@ def home(request):
         Q(name__icontains=q) |
         Q(description__icontains=q))
         
-    topics = Topic.objects.all()
+    # limits so that its only the first five 
+    topics = Topic.objects.all()[0:5]
     # this works faster then len method to count the amount of rooms
     room_count = rooms.count()
-    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))
+    room_messages = Message.objects.filter(Q(room__topic__name__icontains=q))[0:4]
     
     # this is a dictionary lol took me too long to realize what was going on
     context = {'rooms': rooms, 'topics': topics, 'room_count': room_count, 'room_messages': room_messages}
@@ -183,9 +183,22 @@ def updateUser(request):
     form = UserForm(instance=user)
     
     if request.method == 'POST':
-        form = UserForm(request.POST, instance=user)
+        # request files is getting the images for the avatar
+        form = UserForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
             return redirect('user-profile', pk=user.id)
     
     return render(request, 'base/update-user.html', {'form': form})
+
+def topicsPage(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    topics = Topic.objects.filter(name__icontains=q)
+    rooms = Room.objects.all()
+    context = {'topics': topics, 'rooms': rooms}
+    return render(request, 'base/topics.html', context)
+
+def activityPage(request):
+    room_messages = Message.objects.all()
+    context = {'room_messages': room_messages}
+    return render(request, 'base/activity.html', context)
