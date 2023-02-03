@@ -1,4 +1,4 @@
-# studybud# studybud
+# studybud
 Studybud is a website that provides a platform for people to study together and collaborate on software development. It features a chatroom where users can communicate and exchange ideas and knowledge. The goal of Studybud is to support and encourage individuals in their learning journeys and provide a space for them to connect and study with others.
 
 ## Features
